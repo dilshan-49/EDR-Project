@@ -8,11 +8,9 @@
 	
 #include "Descriptors.h"
 
-#include "LUFA/Drivers/Board/LEDs.h"
 #include "LUFA/Drivers/Peripheral/Serial.h"
 #include "LUFA/Drivers/Misc/RingBuffer.h"
 #include "LUFA/Drivers/USB/USB.h"
-#include "LUFA/Platform/Platform.h"
 
 
 
@@ -20,8 +18,8 @@
 void SetupHardware(void);
 
 
-void EVENT_USB_Device_ConfigurationChanged(void);
-void EVENT_USB_Device_ControlRequest(void);
+void EVENT_USB_Device_ConfigurationChanged(void); // Write timeout exception raised in PC without this function 
+void EVENT_USB_Device_ControlRequest(void);	// Cannot configure port error in PC without this function
 	
 	
 	
@@ -117,7 +115,6 @@ void SetupHardware(void)
 #endif
 
 	/* Hardware Initialization */
-	LEDs_Init();
 	USB_Init();
 	
 	DDRC |= (1 << DDC7);
@@ -143,14 +140,6 @@ void EVENT_USB_Device_ControlRequest(void)
 /** ISR to manage the reception of data from the serial port, placing received bytes into a circular buffer
  *  for later transmission to the host.
  */
-ISR(USART1_RX_vect, ISR_BLOCK)
-{
-	uint8_t ReceivedByte = UDR1;
-
-	if ((USB_DeviceState == DEVICE_STATE_Configured) && !(RingBuffer_IsFull(&USARTtoUSB_Buffer)))
-	  RingBuffer_Insert(&USARTtoUSB_Buffer, ReceivedByte);
-}
-
 /** Event handler for the CDC Class driver Line Encoding Changed event.
  *
  *  \param[in] CDCInterfaceInfo  Pointer to the CDC class interface configuration structure being referenced

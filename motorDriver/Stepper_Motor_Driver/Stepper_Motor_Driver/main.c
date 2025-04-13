@@ -4,6 +4,9 @@
  * @date 2025-04-12
  * @brief Main function 
  */
+/*
+
+*/
  #define F_CPU 16000000UL
  #include <avr/io.h>
  #include <util/delay.h>
@@ -32,7 +35,7 @@
 
     if (f1 != 0) {
         ICR1 = F_CPU/(256*f1);            // TOP value for 90 kHz
-        OCR1A = ICR1 / 2;  
+        OCR1B = ICR1 / 2;  
         TIMSK1 |= (1 << OCIE1B);
     }
     else {
@@ -73,7 +76,7 @@ void move_XY(float x, float y) {
  ISR(TIMER1_COMPB_vect) {
      pulseCount1++;  // Increment on each toggle (rising/falling edge)
      if ( pulseCount1>=targetPulses1){
-         PORTD |= (1 << PC6); //PIN12
+         PORTD |= (1 << PD6); //PIN12
          OCR1B =0;
          TCCR1B &= ~(1 << CS12);
      }
@@ -88,13 +91,13 @@ void move_XY(float x, float y) {
  }
  int main(void) {
      DDRC |= (1 << PC7);  // LED indicator
-     DDRC |= (1<<PD6);
+     DDRD |= (1<<PD6);
      PORTC &= ~(1 << PC7);  // LED off initially
      PORTC ^= (1 << PC7);
      _delay_ms(200);
      PORTC ^= (1 << PC7);
      timer_setup();
-     generate_pulses(2,4,20,10);
+     generate_pulses(2,4,20,20);
      while (1) {
      }
  }

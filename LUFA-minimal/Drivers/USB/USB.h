@@ -390,12 +390,6 @@
 		#include "Core/USBController.h"
 		#include "Core/USBInterrupt.h"
 
-		#if defined(USB_CAN_BE_HOST)
-			#include "Core/Host.h"
-			#include "Core/Pipe.h"
-			#include "Core/HostStandardReq.h"
-			#include "Core/PipeStream.h"
-		#endif
 
 		#if defined(USB_CAN_BE_DEVICE)
 			#include "Core/Device.h"

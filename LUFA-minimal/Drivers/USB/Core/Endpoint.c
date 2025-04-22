@@ -28,15 +28,14 @@
   this software.
 */
 
-#include "../../../../Common/Common.h"
-#if (ARCH == ARCH_AVR8)
+#include "../../../Common/Common.h"
 
 #define  __INCLUDE_FROM_USB_DRIVER
-#include "../USBMode.h"
+#include "USBMode.h"
 
 #if defined(USB_CAN_BE_DEVICE)
 
-#include "../Endpoint.h"
+#include "Endpoint.h"
 
 #if !defined(FIXED_CONTROL_ENDPOINT_SIZE)
 uint8_t USB_Device_ControlEndpointSize = ENDPOINT_CONTROLEP_DEFAULT_SIZE;
@@ -198,4 +197,3 @@ uint8_t Endpoint_WaitUntilReady(void)
 
 #endif
 
-#endif

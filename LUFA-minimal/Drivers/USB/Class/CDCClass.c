@@ -29,13 +29,11 @@
 */
 
 #define  __INCLUDE_FROM_USB_DRIVER
-#include "../../Core/USBMode.h"
-
-#if defined(USB_CAN_BE_DEVICE)
+#include "../Core/USBMode.h"
 
 #define  __INCLUDE_FROM_CDC_DRIVER
 #define  __INCLUDE_FROM_CDC_DEVICE_C
-#include "CDCClassDevice.h"
+#include "CDCClass.h"
 
 void CDC_Device_ProcessControlRequest(USB_ClassInfo_CDC_Device_t* const CDCInterfaceInfo)
 {
@@ -358,5 +356,4 @@ void CDC_Device_Event_Stub(void)
 
 }
 
-#endif
 

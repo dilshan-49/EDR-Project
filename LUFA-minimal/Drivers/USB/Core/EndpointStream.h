@@ -106,16 +106,7 @@
 
 	/* Architecture Includes: */
 		#if (ARCH == ARCH_AVR8)
-			#include "AVR8/EndpointStream_AVR8.h"
-		#elif (ARCH == ARCH_UC3)
-			#include "UC3/EndpointStream_UC3.h"
-		#elif (ARCH == ARCH_XMEGA)
-			#include "XMEGA/EndpointStream_XMEGA.h"
-		#endif
-
-	/* Disable C linkage for C++ Compilers: */
-		#if defined(__cplusplus)
-			}
+			#include "EndpointStream_AVR8.h"
 		#endif
 
 #endif

@@ -149,10 +149,7 @@
 			#endif
 	#endif
 
-	/* Disable C linkage for C++ Compilers: */
-		#if defined(__cplusplus)
-			}
-		#endif
+
 
 #endif
 

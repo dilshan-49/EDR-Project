@@ -49,18 +49,10 @@
 		#include "StdRequestType.h"
 		#include "StdDescriptors.h"
 
-		#if defined(USB_CAN_BE_DEVICE)
-			#include "DeviceStandardReq.h"
-		#endif
+		#include "DeviceStandardReq.h"
 
-		#if defined(USB_CAN_BE_HOST)
-			#include "HostStandardReq.h"
-		#endif
 
-	/* Enable C linkage for C++ Compilers: */
-		#if defined(__cplusplus)
-			extern "C" {
-		#endif
+
 
 	/* Preprocessor Checks: */
 		#if !defined(__INCLUDE_FROM_USB_DRIVER)
@@ -90,32 +82,8 @@
 			 */
 			 extern USB_Request_Header_t USB_ControlRequest;
 
-			#if defined(USB_CAN_BE_HOST) || defined(__DOXYGEN__)
-				#if !defined(HOST_STATE_AS_GPIOR) || defined(__DOXYGEN__)
-					/** Indicates the current host state machine state. When in host mode, this indicates the state
-					 *  via one of the values of the \ref USB_Host_States_t enum values.
-					 *
-					 *  This value should not be altered by the user application as it is handled automatically by the
-					 *  library.
-					 *
-					 *  To reduce program size and speed up checks of this global on the AVR8 architecture, it can be
-					 *  placed into one of the AVR's \c GPIOR hardware registers instead of RAM by defining the
-					 *  \c HOST_STATE_AS_GPIOR token to a value between 0 and 2 in the project makefile and passing it to
-					 *  the compiler via the -D switch. When defined, the corresponding GPIOR register should not be used
-					 *  in the user application except implicitly via the library APIs.
-					 *
-					 *  \note This global is only present if the user application can be a USB host.
-					 *
-					 *  \see \ref USB_Host_States_t for a list of possible device states.
-					 *
-					 *  \ingroup Group_Host
-					 */
-					extern volatile uint8_t USB_HostState;
-				#else
-					#define USB_HostState            CONCAT_EXPANDED(GPIOR, HOST_STATE_AS_GPIOR)
-				#endif
-			#endif
-
+				
+				
 			#if defined(USB_CAN_BE_DEVICE) || defined(__DOXYGEN__)
 				#if !defined(DEVICE_STATE_AS_GPIOR) || defined(__DOXYGEN__)
 					/** Indicates the current device state machine state. When in device mode, this indicates the state
@@ -143,7 +111,7 @@
 					 */
 					extern volatile uint8_t USB_DeviceState;
 				#else
-					#define USB_DeviceState            CONCAT_EXPANDED(GPIOR, DEVICE_STATE_AS_GPIOR)
+					#define USB_DeviceState          GPIOR0
 				#endif
 			#endif
 
@@ -172,24 +140,6 @@
 			 */
 			void USB_USBTask(void);
 
-	/* Private Interface - For use in library only: */
-	#if !defined(__DOXYGEN__)
-		/* Function Prototypes: */
-			#if defined(__INCLUDE_FROM_USBTASK_C)
-				#if defined(USB_CAN_BE_HOST)
-					static void USB_HostTask(void);
-				#endif
-
-				#if defined(USB_CAN_BE_DEVICE)
-					static void USB_DeviceTask(void);
-				#endif
-			#endif
-
-		/* Macros: */
-			#define HOST_TASK_NONBLOCK_WAIT(Duration, NextState) do { USB_HostState   = HOST_STATE_WaitForDevice; \
-			                                                          WaitMSRemaining = (Duration);               \
-			                                                          PostWaitState   = (NextState);              } while (0)
-	#endif
 
 	/* Disable C linkage for C++ Compilers: */
 		#if defined(__cplusplus)

@@ -28,12 +28,12 @@
   this software.
 */
 
-#include "../../../../Common/Common.h"
+#include "../../../Common/Common.h"
 #if (ARCH == ARCH_AVR8)
 
 #define  __INCLUDE_FROM_USB_DRIVER
 #define  __INCLUDE_FROM_USB_CONTROLLER_C
-#include "../USBController.h"
+#include "USBController.h"
 
 #if defined(USB_CAN_BE_BOTH)
 volatile uint8_t USB_CurrentMode = USB_MODE_None;

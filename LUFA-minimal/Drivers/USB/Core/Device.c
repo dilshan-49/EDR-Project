@@ -28,15 +28,13 @@
   this software.
 */
 
-#include "../../../../Common/Common.h"
-#if (ARCH == ARCH_AVR8)
+#include "../../../Common/Common.h"
 
 #define  __INCLUDE_FROM_USB_DRIVER
-#include "../USBMode.h"
+#include "USBMode.h"
 
-#if defined(USB_CAN_BE_DEVICE)
 
-#include "../Device.h"
+#include "Device.h"
 
 void USB_Device_SendRemoteWakeup(void)
 {
@@ -52,6 +50,4 @@ void USB_Device_SendRemoteWakeup(void)
 	while (UDCON & (1 << RMWKUP));
 }
 
-#endif
 
-#endif

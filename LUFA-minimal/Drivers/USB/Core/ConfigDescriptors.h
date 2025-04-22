@@ -53,7 +53,6 @@
 	/* Includes: */
 		#include "../../../Common/Common.h"
 		#include "USBMode.h"
-		#include "HostStandardReq.h"
 		#include "StdDescriptors.h"
 
 	/* Enable C linkage for C++ Compilers: */
@@ -275,11 +274,6 @@
 				*CurrConfigLoc  = (void*)((uintptr_t)*CurrConfigLoc + CurrDescriptorSize);
 				*BytesRem      -= CurrDescriptorSize;
 			}
-
-	/* Disable C linkage for C++ Compilers: */
-		#if defined(__cplusplus)
-			}
-		#endif
 
 #endif
 

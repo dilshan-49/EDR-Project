@@ -85,6 +85,9 @@
 //		#define NO_AUTO_VBUS_MANAGEMENT
 //		#define INVERTED_VBUS_ENABLE_LINE
 
+
+		#define USB_DeviceState          GPIOR0
+		
 	#else
 
 		#error Unsupported architecture for this LUFA configuration file.

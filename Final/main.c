@@ -36,10 +36,9 @@ int main(void)
 	setup_hardware();
 
 	
-	
 	while(!m_usb_isconnected()); // wait for a connection
 	while(m_usb_isconnected())
-	{	m_usb_tx_hexchar(WAITING);
+	{	m_usb_tx_char(WAITING);
 		PORTF &= ((0<<PORTF0)|(0<<PORTF1)|(0<<PORTF4));  // Turn off LEDs
 		if(m_usb_rx_available()==4)
 		{
@@ -65,7 +64,9 @@ int main(void)
 	            
 				m_usb_tx_char(GENERATING);
 	            // Generate pulses based on counts
-	            generate_pulses(10,10,count1, count2);
+				pulseCount1=0;
+				pulseCount2=0;
+	            generate_pulses(1000,1000,count1,count2);
 				
 				while (!(pulse1 && pulse2)){
 					PORTF ^= (1<<PORTF4);
@@ -95,13 +96,13 @@ int main(void)
 		else{
 			m_usb_rx_flush();
 			//case of recieved bytes!=4
-			PORTC^=(1<<PORTC7);
+		//	PORTC^=(1<<PORTC7);
 		}
 			            
 		// Delay 5ms
 		_delay_ms(80);
 	}
-}
+} 
 
 void setup_hardware(){
 	//setup LED

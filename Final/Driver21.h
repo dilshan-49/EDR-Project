@@ -46,15 +46,17 @@ void timer_setup() {
     DDRB |= (1 << DDB5);  // Set PB5 (OC1A) as output for motor 1
     DDRC |= (1 << DDC6);  // Set PC6 (OC3A) as output for motor 2
 
+	
+	
     // Configure Timer1 for CTC (Clear Timer on Compare) mode
     TCCR1A = 1 << COM1A0;                 // Toggle OC1A on compare match
- //   TCCR1B = (1 << WGM12) | (1 << CS10);  // CTC mode, no prescaling
-    TCCR1B = (1 << WGM12) ;//| (1 << CS10) | (1 << CS11);  // CTC mode, prescaling by 64 . No need to set clock here
+    TCCR1B = (1 << WGM12) | (1 << CS10) ;  // CTC mode, prescaling by 64 .
+//	TIMSK1 &= ~(1 << OCIE1A);		// have interrupts disabled at start
 
     // Configure Timer3 for CTC mode
     TCCR3A = 1 << COM3A0;                 // Toggle OC3A on compare match
-//    TCCR3B = (1 << WGM32) | (1 << CS30);  // CTC mode, no prescaling
-    TCCR3B = (1 << WGM32);  //| (1 << CS30) | (1 << CS31);  // CTC mode, prescaling by 64. No need to set clock here
+    TCCR3B = (1 << WGM32) | (1 << CS30);  // CTC mode, prescaling by 64.
+//	TIMSK3 &= ~(1 << OCIE3A);   // Disable interrupt at start
 
     // LED and debug setup
     DDRC |= (1 << DDC7);      // Set PC7 as output for LED indicator
@@ -81,28 +83,28 @@ void generate_pulses(uint32_t f1, uint32_t f2, uint32_t c1, uint32_t c2) {
     targetPulses2 = c2;
     
     // Configure Timer1 for motor 1 if frequency > 100Hz
-    if (f1 > 5) {
-		TCCR1B |= (1 << CS10) | (1<<CS11);
-        OCR1A = F_CPU /(f1 * 2 * 64) -1;  // Calculate compare value for desired frequency
+    if (f1 > 100) {
+        OCR1A = F_CPU /(f1 * 2) -1;  // Calculate compare value for desired frequency
+		TCCR1B |= (1 << CS10);
         TIMSK1 |= (1 << OCIE1A);   // Enable compare interrupt
     } else {
         // Disable Timer1 if frequency is too low
         OCR1A = 0;
-        TCCR1B &= ~((1 << CS10)|(1<<CS11));    // Stop timer
+        TCCR1B &= ~(1 << CS10);    // Stop timer
         TIMSK1 &= ~(1 << OCIE1A);   // Disable interrupt
     }
 
     _delay_us(15);  // Small delay to ensure proper timing
 
     // Configure Timer3 for motor 2 if frequency > 100Hz
-    if (f2 > 5) {
-		TCCR3B |= (1 << CS30) | (1<<CS31);
-        OCR3A = F_CPU /(f2 * 2 * 64) -1;  // Calculate compare value for desired frequency
+    if (f2 > 100) {
+        OCR3A = F_CPU /(f2 * 2) -1;  // Calculate compare value for desired frequency
+		TCCR3B |= (1 << CS30);
         TIMSK3 |= (1 << OCIE3A);   // Enable compare interrupt
     } else {
         // Disable Timer3 if frequency is too low
         OCR3A = 0;
-        TCCR3B &= ~((1 << CS30)|(1<<CS31));    // Stop timer
+        TCCR3B &= ~(1 << CS30);    // Stop timer
         TIMSK3 &= ~(1 << OCIE3A);   // Disable interrupt
     }
 
@@ -117,9 +119,10 @@ ISR(TIMER1_COMPA_vect) {
     
     // Check if target pulse count reached
     if (pulseCount1 >= targetPulses1) {
-        PORTF |= (1 << PORTF0);  // Set PD6 (indicate completion)
-        TCCR1B &= ~((1 << CS10)|(1<<CS11));   // Stop Timer1
+        TIMSK1 &= ~(1 << OCIE1A);   // detach interrupt
 		OCR1A=0;
+		TCCR1B &= ~((1 << CS10) | (1 << CS11) | (1 << CS12));  // remove timer 
+		PORTF |= (1 << PORTF0);  // Set PD6 (indicate completion)
 		pulse1=true;
 		
     }
@@ -133,9 +136,10 @@ ISR(TIMER3_COMPA_vect) {
     
     // Check if target pulse count reached
     if (pulseCount2 >= targetPulses2) {
-        TCCR3B &= ~((1 << CS30)|(1<<CS31));  // Stop Timer3
-        PORTF |= (1 << PORTF1);   // Set PF1 (indicate completion)
+        TIMSK3 &= ~(1 << OCIE3A);  // Detach Interrupt
 		OCR3A=0;
+		TCCR3B &= ~((1 << CS30) | (1 << CS31) | (1 << CS32)); // remove timer
+        PORTF |= (1 << PORTF1);   // Set PF1 (indicate completion)
 		pulse2=true;
     }
 }

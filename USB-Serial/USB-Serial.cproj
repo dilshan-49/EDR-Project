@@ -156,13 +156,7 @@
     <Compile Include="LUFA\Common\Architectures.h">
       <SubType>compile</SubType>
     </Compile>
-    <Compile Include="LUFA\Common\ArchitectureSpecific.h">
-      <SubType>compile</SubType>
-    </Compile>
     <Compile Include="LUFA\Common\Attributes.h">
-      <SubType>compile</SubType>
-    </Compile>
-    <Compile Include="LUFA\Common\BoardTypes.h">
       <SubType>compile</SubType>
     </Compile>
     <Compile Include="LUFA\Common\Common.h">
@@ -174,97 +168,10 @@
     <Compile Include="LUFA\Common\Endianness.h">
       <SubType>compile</SubType>
     </Compile>
-    <Compile Include="LUFA\Drivers\Misc\RingBuffer.h">
-      <SubType>compile</SubType>
-    </Compile>
-    <Compile Include="LUFA\Drivers\Misc\TerminalCodes.h">
-      <SubType>compile</SubType>
-    </Compile>
-    <Compile Include="LUFA\Drivers\Peripheral\ADC.h">
-      <SubType>compile</SubType>
-    </Compile>
-    <Compile Include="LUFA\Drivers\Peripheral\AVR8\ADC_AVR8.h">
-      <SubType>compile</SubType>
-    </Compile>
-    <Compile Include="LUFA\Drivers\Peripheral\AVR8\SerialSPI_AVR8.h">
-      <SubType>compile</SubType>
-    </Compile>
-    <Compile Include="LUFA\Drivers\Peripheral\AVR8\Serial_AVR8.c">
-      <SubType>compile</SubType>
-    </Compile>
-    <Compile Include="LUFA\Drivers\Peripheral\AVR8\Serial_AVR8.h">
-      <SubType>compile</SubType>
-    </Compile>
-    <Compile Include="LUFA\Drivers\Peripheral\AVR8\SPI_AVR8.h">
-      <SubType>compile</SubType>
-    </Compile>
-    <Compile Include="LUFA\Drivers\Peripheral\AVR8\TWI_AVR8.c">
-      <SubType>compile</SubType>
-    </Compile>
-    <Compile Include="LUFA\Drivers\Peripheral\AVR8\TWI_AVR8.h">
-      <SubType>compile</SubType>
-    </Compile>
-    <Compile Include="LUFA\Drivers\Peripheral\Serial.h">
-      <SubType>compile</SubType>
-    </Compile>
-    <Compile Include="LUFA\Drivers\Peripheral\SerialSPI.h">
-      <SubType>compile</SubType>
-    </Compile>
-    <Compile Include="LUFA\Drivers\Peripheral\SPI.h">
-      <SubType>compile</SubType>
-    </Compile>
-    <Compile Include="LUFA\Drivers\Peripheral\TWI.h">
-      <SubType>compile</SubType>
-    </Compile>
     <Compile Include="LUFA\Drivers\USB\Class\CDCClass.h">
       <SubType>compile</SubType>
     </Compile>
-    <Compile Include="LUFA\Drivers\USB\Class\Common\CDCClassCommon.h">
-      <SubType>compile</SubType>
-    </Compile>
-    <Compile Include="LUFA\Drivers\USB\Class\Device\CDCClassDevice.c">
-      <SubType>compile</SubType>
-    </Compile>
-    <Compile Include="LUFA\Drivers\USB\Class\Device\CDCClassDevice.h">
-      <SubType>compile</SubType>
-    </Compile>
-    <Compile Include="LUFA\Drivers\USB\Core\AVR8\Device_AVR8.c">
-      <SubType>compile</SubType>
-    </Compile>
-    <Compile Include="LUFA\Drivers\USB\Core\AVR8\Device_AVR8.h">
-      <SubType>compile</SubType>
-    </Compile>
-    <Compile Include="LUFA\Drivers\USB\Core\AVR8\EndpointStream_AVR8.c">
-      <SubType>compile</SubType>
-    </Compile>
-    <Compile Include="LUFA\Drivers\USB\Core\AVR8\EndpointStream_AVR8.h">
-      <SubType>compile</SubType>
-    </Compile>
-    <Compile Include="LUFA\Drivers\USB\Core\AVR8\Endpoint_AVR8.c">
-      <SubType>compile</SubType>
-    </Compile>
-    <Compile Include="LUFA\Drivers\USB\Core\AVR8\Endpoint_AVR8.h">
-      <SubType>compile</SubType>
-    </Compile>
-    <Compile Include="LUFA\Drivers\USB\Core\AVR8\Template\Template_Endpoint_Control_R.c">
-      <SubType>compile</SubType>
-    </Compile>
-    <Compile Include="LUFA\Drivers\USB\Core\AVR8\Template\Template_Endpoint_Control_W.c">
-      <SubType>compile</SubType>
-    </Compile>
-    <Compile Include="LUFA\Drivers\USB\Core\AVR8\Template\Template_Endpoint_RW.c">
-      <SubType>compile</SubType>
-    </Compile>
-    <Compile Include="LUFA\Drivers\USB\Core\AVR8\USBController_AVR8.c">
-      <SubType>compile</SubType>
-    </Compile>
-    <Compile Include="LUFA\Drivers\USB\Core\AVR8\USBController_AVR8.h">
-      <SubType>compile</SubType>
-    </Compile>
-    <Compile Include="LUFA\Drivers\USB\Core\AVR8\USBInterrupt_AVR8.c">
-      <SubType>compile</SubType>
-    </Compile>
-    <Compile Include="LUFA\Drivers\USB\Core\AVR8\USBInterrupt_AVR8.h">
+    <Compile Include="LUFA\Drivers\USB\Class\CDCClass.c">
       <SubType>compile</SubType>
     </Compile>
     <Compile Include="LUFA\Drivers\USB\Core\ConfigDescriptors.c">
@@ -282,10 +189,22 @@
     <Compile Include="LUFA\Drivers\USB\Core\DeviceStandardReq.h">
       <SubType>compile</SubType>
     </Compile>
+    <Compile Include="LUFA\Drivers\USB\Core\Device.c">
+      <SubType>compile</SubType>
+    </Compile>
     <Compile Include="LUFA\Drivers\USB\Core\Endpoint.h">
       <SubType>compile</SubType>
     </Compile>
     <Compile Include="LUFA\Drivers\USB\Core\EndpointStream.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="LUFA\Drivers\USB\Core\Endpoint.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="LUFA\Drivers\USB\Core\EndpointStream_AVR8.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="LUFA\Drivers\USB\Core\EndpointStream_AVR8.h">
       <SubType>compile</SubType>
     </Compile>
     <Compile Include="LUFA\Drivers\USB\Core\Events.c">
@@ -306,7 +225,22 @@
     <Compile Include="LUFA\Drivers\USB\Core\StdRequestType.h">
       <SubType>compile</SubType>
     </Compile>
+    <Compile Include="LUFA\Drivers\USB\Core\Template\Template_Endpoint_Control_R.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="LUFA\Drivers\USB\Core\Template\Template_Endpoint_Control_W.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="LUFA\Drivers\USB\Core\Template\Template_Endpoint_RW.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="LUFA\Drivers\USB\Core\USBController.c">
+      <SubType>compile</SubType>
+    </Compile>
     <Compile Include="LUFA\Drivers\USB\Core\USBController.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="LUFA\Drivers\USB\Core\USBInterrupt.c">
       <SubType>compile</SubType>
     </Compile>
     <Compile Include="LUFA\Drivers\USB\Core\USBInterrupt.h">
@@ -332,16 +266,10 @@
     <Folder Include="LUFA\" />
     <Folder Include="LUFA\Common\" />
     <Folder Include="LUFA\Drivers\" />
-    <Folder Include="LUFA\Drivers\Misc\" />
-    <Folder Include="LUFA\Drivers\Peripheral\" />
-    <Folder Include="LUFA\Drivers\Peripheral\AVR8\" />
     <Folder Include="LUFA\Drivers\USB\" />
-    <Folder Include="LUFA\Drivers\USB\Class\Common" />
-    <Folder Include="LUFA\Drivers\USB\Class\Device" />
     <Folder Include="LUFA\Drivers\USB\Core\" />
-    <Folder Include="LUFA\Drivers\USB\Core\AVR8\" />
-    <Folder Include="LUFA\Drivers\USB\Core\AVR8\Template" />
     <Folder Include="LUFA\Drivers\USB\Class" />
+    <Folder Include="LUFA\Drivers\USB\Core\Template\" />
   </ItemGroup>
   <ItemGroup>
     <None Include="LUFA\License.txt">

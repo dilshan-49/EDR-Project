@@ -6,14 +6,14 @@ import time
 SERIAL_PORT = "COM10"  # Replace with the correct COM port for your device
 BAUD_RATE = 9600      # Match the baud rate configured in your microcontroller
 
-def send_pulse_count(ser, pulse_count):
+def send_coordinate(ser, x_coordinate,y_coordinate):
     """
     Sends the target pulse count to the microcontroller.
     """
-    # Convert the 16-bit pulse count to two bytes
-    data = struct.pack(">H", pulse_count)  # Big-endian 16-bit integer
+    # Convert the 16-bit coordinate to two bytes
+    data = struct.pack(">HH", x_coordinate,y_coordinate)  # Big-endian 16-bit integer
     ser.write(data)
-    print(f"Sent target pulse count: {pulse_count}")
+    print(f"Sent target cordinates: { x_coordinate},{y_coordinate}")
 
 def read_response(ser):
     """
@@ -26,14 +26,16 @@ def main():
     # Open the serial port
     try:
         ser = serial.Serial(SERIAL_PORT, BAUD_RATE, timeout=5)
-        time.sleep(2)  # Wait for the connection to initialize
+        while True:
+            time.sleep(0.1) # Wait for the connection to initialize
 
-        # Send the target pulse count
-        target_pulse_count = 20  # Replace with the desired pulse count
-        send_pulse_count(ser, target_pulse_count)
-
-        # Wait for and read the response
-        read_response(ser)
+            response = ser.read(1)  # Read 1 byte
+            if response == b'\xFF':
+                print("SUCCESS")
+            elif response == b'\x00':
+                print("ERROR")
+            else:
+                print(f"Unknown response: {response}")
 
     except serial.SerialException as e:
         print(f"Error: {e}")

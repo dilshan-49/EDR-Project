@@ -8,8 +8,6 @@
 	
 #include "Descriptors.h"
 
-#include "LUFA/Drivers/Peripheral/Serial.h"
-#include "LUFA/Drivers/Misc/RingBuffer.h"
 #include "LUFA/Drivers/USB/USB.h"
 
 
@@ -21,21 +19,6 @@ void SetupHardware(void);
 void EVENT_USB_Device_ConfigurationChanged(void); // Write timeout exception raised in PC without this function 
 void EVENT_USB_Device_ControlRequest(void);	// Cannot configure port error in PC without this function
 	
-	
-	
-	/** Circular buffer to hold data from the host before it is sent to the device via the serial port. */
-static RingBuffer_t USBtoUSART_Buffer;
-
-/** Underlying data buffer for \ref USBtoUSART_Buffer, where the stored bytes are located. */
-static uint8_t      USBtoUSART_Buffer_Data[128];
-
-/** Circular buffer to hold data from the serial port before it is sent to the host. */
-static RingBuffer_t USARTtoUSB_Buffer;
-
-/** Underlying data buffer for \ref USARTtoUSB_Buffer, where the stored bytes are located. */
-static uint8_t      USARTtoUSB_Buffer_Data[128];
-
-
 
 /** LUFA CDC Class driver interface configuration and state information. This structure is
  *  passed to all CDC Class driver functions, so that multiple instances of the same class
@@ -68,34 +51,28 @@ USB_ClassInfo_CDC_Device_t VirtualSerial_CDC_Interface =
 	};
 
 
-
+uint32_t counter=0;
 
 /** Main program entry point. This routine contains the overall program flow, including initial
  *  setup of all components and the main program loop.
  */
 int main(void)
 {
-	SetupHardware();
-
-	RingBuffer_InitBuffer(&USBtoUSART_Buffer, USBtoUSART_Buffer_Data, sizeof(USBtoUSART_Buffer_Data));
-	RingBuffer_InitBuffer(&USARTtoUSB_Buffer, USARTtoUSB_Buffer_Data, sizeof(USARTtoUSB_Buffer_Data));
-	
-	GlobalInterruptEnable();
+	SetupHardware();	
+	sei();
 
 for (;;)
 {
-	// Check if data is available from the PC
-	int16_t ReceivedByte = CDC_Device_ReceiveByte(&VirtualSerial_CDC_Interface);
-	if (ReceivedByte >= 0)
-	{
-		// Echo the received character back to the PC
-		CDC_Device_SendByte(&VirtualSerial_CDC_Interface, ReceivedByte);
+	counter++;
+// Send a single byte for success
+	if (counter==100) CDC_Device_SendByte(&VirtualSerial_CDC_Interface, 0xFF);  // SUCCESS
+	
 
-		// Toggle the built-in LED (PB0)
 
-		PORTC ^= ~(1 << PORTC7); 
-	}
-
+	// Send a single byte for error
+	if (counter==200) CDC_Device_SendByte(&VirtualSerial_CDC_Interface, 0x00);  // ERROR
+	
+	_delay_ms(5);
 	CDC_Device_USBTask(&VirtualSerial_CDC_Interface);
 	USB_USBTask();
 }

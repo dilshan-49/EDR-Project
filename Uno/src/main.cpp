@@ -10,7 +10,7 @@ volatile unsigned long pulseCount1 = 0;
 unsigned long cumulativeCount1 = 0;
 // Interval for reporting pulse counts
 unsigned long previousMillis = 0;
-const long interval = 1000; // Report every 1 second
+const long interval = 500; // Report every 500ms
 
 void setup() {
   // Configure pulse pins as inputs with pull-up resistors

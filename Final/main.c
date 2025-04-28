@@ -26,24 +26,20 @@ int main(void)
 	uint16_t coordinate1 = 0;
 	uint16_t coordinate2 = 0;
 	
-	uint8_t count1=0;
-	uint8_t count2=0;
-	
 	uint8_t response = 0;
 	
 	m_usb_init();
 	timer_setup();
 	setup_hardware();
 
-	
 	while(!m_usb_isconnected()); // wait for a connection
 	while(m_usb_isconnected())
 	{	m_usb_tx_char(WAITING);
-		PORTF &= ((0<<PORTF0)|(0<<PORTF1)|(0<<PORTF4));  // Turn off LEDs
 		if(m_usb_rx_available()==4)
 		{
 			// Read 16bit coordinate 1 
-			pulse1=pulse2=false;
+			pulse1=false;
+			pulse2=false;
 			coordinate1 = m_usb_rx_char();
 			coordinate1=(coordinate1<<8)| m_usb_rx_char();
 			
@@ -58,15 +54,13 @@ int main(void)
 		
             if(response == ACK)
             {
-	            // Calculate counts
-	            count1 = coordinate1;
-	            count2 = coordinate2;
+
 	            
 				m_usb_tx_char(GENERATING);
 	            // Generate pulses based on counts
 				pulseCount1=0;
 				pulseCount2=0;
-	            generate_pulses(1000,1000,count1,count2);
+	            generate_pulses(1000,1000,coordinate1,coordinate2);
 				
 				while (!(pulse1 && pulse2)){
 					PORTF ^= (1<<PORTF4);
@@ -101,7 +95,15 @@ int main(void)
 			            
 		// Delay 5ms
 		_delay_ms(80);
+	} 
+	
+	
+	generate_pulses(1000,1000,10000,10000);
+	while(!(pulse1&&pulse2)){
+		PORTC^=(1<<PORTC7);
+		_delay_ms(100);
 	}
+	blink_led(10);
 } 
 
 void setup_hardware(){

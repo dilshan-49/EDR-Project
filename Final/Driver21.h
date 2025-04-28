@@ -49,13 +49,17 @@ void timer_setup() {
 	
 	
     // Configure Timer1 for CTC (Clear Timer on Compare) mode
-    TCCR1A = 1 << COM1A0;                 // Toggle OC1A on compare match
-    TCCR1B = (1 << WGM12) | (1 << CS10) ;  // CTC mode, prescaling by 64 .
+    TCCR1A = 1 << COM1A0; 
+	TCCR1B = 0  ;              // Toggle OC1A on compare match
+    TCCR1B = (1 << WGM12);  // CTC mode
+
 //	TIMSK1 &= ~(1 << OCIE1A);		// have interrupts disabled at start
 
     // Configure Timer3 for CTC mode
     TCCR3A = 1 << COM3A0;                 // Toggle OC3A on compare match
-    TCCR3B = (1 << WGM32) | (1 << CS30);  // CTC mode, prescaling by 64.
+	TCCR3B=0;
+    TCCR3B = 1 << WGM32;  // CTC mode
+
 //	TIMSK3 &= ~(1 << OCIE3A);   // Disable interrupt at start
 
     // LED and debug setup
@@ -78,6 +82,8 @@ void timer_setup() {
  * @param c2 Pulse count for motor 2
  */
 void generate_pulses(uint32_t f1, uint32_t f2, uint32_t c1, uint32_t c2) {
+    // Since interrupts triggered twice per pulse, pulse count will be half
+
     // Set target pulse counts
     targetPulses1 = c1;
     targetPulses2 = c2;
@@ -119,8 +125,6 @@ ISR(TIMER1_COMPA_vect) {
     
     // Check if target pulse count reached
     if (pulseCount1 >= targetPulses1) {
-        TIMSK1 &= ~(1 << OCIE1A);   // detach interrupt
-		OCR1A=0;
 		TCCR1B &= ~((1 << CS10) | (1 << CS11) | (1 << CS12));  // remove timer 
 		PORTF |= (1 << PORTF0);  // Set PD6 (indicate completion)
 		pulse1=true;
@@ -136,8 +140,6 @@ ISR(TIMER3_COMPA_vect) {
     
     // Check if target pulse count reached
     if (pulseCount2 >= targetPulses2) {
-        TIMSK3 &= ~(1 << OCIE3A);  // Detach Interrupt
-		OCR3A=0;
 		TCCR3B &= ~((1 << CS30) | (1 << CS31) | (1 << CS32)); // remove timer
         PORTF |= (1 << PORTF1);   // Set PF1 (indicate completion)
 		pulse2=true;

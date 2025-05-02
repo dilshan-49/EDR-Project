@@ -9,6 +9,10 @@ Project("{54F91283-7BC4-4236-8FF9-10F437C3AD48}") = "Interrupt", "Interrupt\Inte
 EndProject
 Project("{54F91283-7BC4-4236-8FF9-10F437C3AD48}") = "serial-interrupt", "serial-interrupt\serial-interrupt.cproj", "{6EDC559B-C570-42B0-A102-56F4360F462B}"
 EndProject
+Project("{54F91283-7BC4-4236-8FF9-10F437C3AD48}") = "Final", "Final\Final.cproj", "{A1055181-A464-43E2-AD31-B9B78486C103}"
+EndProject
+Project("{54F91283-7BC4-4236-8FF9-10F437C3AD48}") = "MotorDriver", "motorDriver\MotorDriver.cproj", "{437FF9EC-7C13-4CA5-AC5B-2805F7F476D4}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|AVR = Debug|AVR
@@ -27,6 +31,14 @@ Global
 		{6EDC559B-C570-42B0-A102-56F4360F462B}.Debug|AVR.Build.0 = Debug|AVR
 		{6EDC559B-C570-42B0-A102-56F4360F462B}.Release|AVR.ActiveCfg = Release|AVR
 		{6EDC559B-C570-42B0-A102-56F4360F462B}.Release|AVR.Build.0 = Release|AVR
+		{A1055181-A464-43E2-AD31-B9B78486C103}.Debug|AVR.ActiveCfg = Debug|AVR
+		{A1055181-A464-43E2-AD31-B9B78486C103}.Debug|AVR.Build.0 = Debug|AVR
+		{A1055181-A464-43E2-AD31-B9B78486C103}.Release|AVR.ActiveCfg = Release|AVR
+		{A1055181-A464-43E2-AD31-B9B78486C103}.Release|AVR.Build.0 = Release|AVR
+		{437FF9EC-7C13-4CA5-AC5B-2805F7F476D4}.Debug|AVR.ActiveCfg = Debug|AVR
+		{437FF9EC-7C13-4CA5-AC5B-2805F7F476D4}.Debug|AVR.Build.0 = Debug|AVR
+		{437FF9EC-7C13-4CA5-AC5B-2805F7F476D4}.Release|AVR.ActiveCfg = Release|AVR
+		{437FF9EC-7C13-4CA5-AC5B-2805F7F476D4}.Release|AVR.Build.0 = Release|AVR
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

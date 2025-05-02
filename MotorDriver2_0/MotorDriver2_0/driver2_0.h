@@ -1,5 +1,14 @@
-#ifndef DRIVER3_0_H_
-#define DRIVER3_0_H_
+/*
+ * driver2_0.h
+ *
+ * Created: 5/3/2025 12:24:36 AM
+ *  Author: adhee
+ */ 
+
+
+#ifndef DRIVER2_0_H_
+#define DRIVER2_0_H_
+
 
 /*
  * StepperDriver.h
@@ -181,7 +190,6 @@ void move_XY(uint16_t target_x, uint16_t target_y,uint8_t enable_pin_enabled) {
                    (y_freq < 100) ? 0 : y_freq, 
                    x_pulses, 
                    y_pulses);
-    
-}
+	}
 
-#endif /* DRIVER3_0_H_ */
+#endif /* DRIVER2_0_H_ */

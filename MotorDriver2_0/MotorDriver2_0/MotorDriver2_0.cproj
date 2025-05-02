@@ -123,6 +123,9 @@
     <Compile Include="driver2_0.h">
       <SubType>compile</SubType>
     </Compile>
+    <Compile Include="driver3_0.h">
+      <SubType>compile</SubType>
+    </Compile>
     <Compile Include="main.c">
       <SubType>compile</SubType>
     </Compile>

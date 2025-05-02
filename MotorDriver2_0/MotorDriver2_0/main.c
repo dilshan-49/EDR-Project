@@ -4,15 +4,10 @@
  * Created: 5/3/2025 12:24:16 AM
  * Author : adhee
  */ 
-
-#include <avr/io.h>
-
-
+#include "driver3_0.h"
 int main(void)
 {
     /* Replace with your application code */
-    while (1) 
-    {
-    }
+    generate_pulses(2000,2000,2000,2000);
 }
 

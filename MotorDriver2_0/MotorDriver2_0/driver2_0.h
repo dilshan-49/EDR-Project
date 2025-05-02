@@ -1,11 +1,3 @@
-/*
- * driver2_0.h
- *
- * Created: 5/3/2025 12:24:36 AM
- *  Author: adhee
- */ 
-
-
 #ifndef DRIVER2_0_H_
 #define DRIVER2_0_H_
 

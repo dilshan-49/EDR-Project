@@ -1,133 +1,196 @@
-#include <avr/io.h>
-#include <stdint.h>
-#include <stdbool.h>
+/* Includes: */
+	#include <avr/io.h>
+	#include <avr/wdt.h>
+	#include <avr/interrupt.h>
+	#include <avr/power.h>
 
-#include "m_general.h"
-#include "m_usb.h"
-#include "Driver21.h"
+	#include "Descriptors.h"
+	
+	#include "LUFA/Drivers/USB/USB.h"
+	#include "stepperDriver.h"
+
+
 /* Flags Used for Communication */
+	#define SUCCESS 0xFF
+	#define ERROR 0x00
+	#define ACK 0xAA
+	#define NAK 0x55
+	#define GENERATING 0x11
+	#define WAITING 0x22
+	
+/* Function Prototypes: */
+	void SetupHardware(void);
+	void blink_led(uint8_t count);
+	void echo_coordinates(uint16_t c1, uint16_t c2);
 
-#define SUCCESS 0xFF
-#define ERROR 0x00
-#define ACK 0xAA
-#define NAK 0x55
-#define GENERATING 0x11
-#define WAITING 0x22
+	void EVENT_USB_Device_ConfigurationChanged(void); // Write timeout exception raised in PC without this function 
+	void EVENT_USB_Device_ControlRequest(void);	// Cannot configure port error in PC without this function
+	
 
+	/** LUFA CDC Class driver interface configuration and state information. This structure is
+	 *  passed to all CDC Class driver functions, so that multiple instances of the same class
+	 *  within a device can be differentiated from one another.
+	 */
+	USB_ClassInfo_CDC_Device_t VirtualSerial_CDC_Interface =
+		{
+			.Config =
+				{
+					.ControlInterfaceNumber         = INTERFACE_ID_CDC_CCI,
+					.DataINEndpoint                 =
+						{
+							.Address                = CDC_TX_EPADDR,
+							.Size                   = CDC_TXRX_EPSIZE,
+							.Banks                  = 1,
+						},
+					.DataOUTEndpoint                =
+						{
+							.Address                = CDC_RX_EPADDR,
+							.Size                   = CDC_TXRX_EPSIZE,
+							.Banks                  = 1,
+						},
+					.NotificationEndpoint           =
+						{
+							.Address                = CDC_NOTIFICATION_EPADDR,
+							.Size                   = CDC_NOTIFICATION_EPSIZE,
+							.Banks                  = 1,
+						},
+				},
+		};
 
-
-void setup_hardware();
-void blink_led(uint8_t count);
-
-void echo_cordinates(uint16_t c1, uint16_t c2);
-
-int main(void)
-{
+	
+	
+	
+int main(void){
 	uint16_t coordinate1 = 0;
 	uint16_t coordinate2 = 0;
+	    
+	SetupHardware();
 	
-	uint8_t response = 0;
-	
-	m_usb_init();
-	timer_setup();
-	setup_hardware();
+    while (1)
+    {
+	    // Only process if device is configured and connected
+	    if (USB_DeviceState == DEVICE_STATE_Configured)
+	    {
+		    // Send waiting status
+		    CDC_Device_SendByte(&VirtualSerial_CDC_Interface, WAITING);
+		    
+		    // Check if exactly 4 bytes are available
+		    if (CDC_Device_BytesReceived(&VirtualSerial_CDC_Interface) == 4)
+		    {
+			    // Reset pulse flags
+			    pulse1 = false;
+			    pulse2 = false;
+			    
+			    // Read 16-bit coordinate 1
+			    uint8_t high = CDC_Device_ReceiveByte(&VirtualSerial_CDC_Interface);
+			    uint8_t low = CDC_Device_ReceiveByte(&VirtualSerial_CDC_Interface);
+			    coordinate1 = (high << 8) | low;
+			    
+			    // Read 16-bit coordinate 2
+			    high = CDC_Device_ReceiveByte(&VirtualSerial_CDC_Interface);
+			    low = CDC_Device_ReceiveByte(&VirtualSerial_CDC_Interface);
+			    coordinate2 = (high << 8) | low;
+			    
+			    // Echo coordinates back to host
+			    echo_coordinates(coordinate1, coordinate2);
+			    
+			    // Send generating status
+			    CDC_Device_SendByte(&VirtualSerial_CDC_Interface, GENERATING);
+			    
+			    // Generate pulses based on coordinates
+			    pulseCount1 = 0;
+			    pulseCount2 = 0;
+			    generate_pulses(1000, 1000, coordinate1, coordinate2);
+			    
+			    // Wait for pulses to complete
+			    while (!(pulse1 && pulse2)) {
+				    PORTF ^= (1 << PORTF4);
+				    _delay_ms(100);
+			    }
+			    
+			    // Turn off LEDs
+			    PORTF &= ~((1 << PORTF0) | (1 << PORTF1) | (1 << PORTF4));
+			    
+			    // Send success status
+			    CDC_Device_SendByte(&VirtualSerial_CDC_Interface, SUCCESS);
+			    
+			    // Blink LED to indicate success
+			    PORTF |= (1 << PORTF4);
+			    _delay_ms(200);
+			    PORTF &= ~(1 << PORTF4);
+		    }
+	    }
+	    
+	    // Run CDC tasks
+	    CDC_Device_USBTask(&VirtualSerial_CDC_Interface);
+	    USB_USBTask();
+	    
+	    _delay_ms(5);
+    }
 
-	while(!m_usb_isconnected()); // wait for a connection
-	while(m_usb_isconnected())
-	{	m_usb_tx_char(WAITING);
-		if(m_usb_rx_available()==4)
-		{
-			// Read 16bit coordinate 1 
-			pulse1=false;
-			pulse2=false;
-			coordinate1 = m_usb_rx_char();
-			coordinate1=(coordinate1<<8)| m_usb_rx_char();
-			
-			// Read 16bit coordinate 2
-			coordinate2 = m_usb_rx_char();
-			coordinate2=(coordinate2<<8)|m_usb_rx_char();
-						
-			echo_cordinates(coordinate1,coordinate2);
-			
-			while(!m_usb_rx_available());
-			response = m_usb_rx_char();
-		
-            if(response == ACK)
-            {
-
-	            
-				m_usb_tx_char(GENERATING);
-	            // Generate pulses based on counts
-				pulseCount1=0;
-				pulseCount2=0;
-	            generate_pulses(1000,1000,coordinate1,coordinate2);
-				
-				while (!(pulse1 && pulse2)){
-					PORTF ^= (1<<PORTF4);
-					_delay_ms(100);
-					};
-				
-				PORTF &= ((0<<PORTF0)|(0<<PORTF1)|(0<<PORTF4));
-				m_usb_tx_char(SUCCESS);
-				
-				PORTF |= 1 << PORTF4;
-				_delay_ms(200);
-					
-            }
-			
-			
-            else if(response == NAK)
-            {
-	            // Blink LED to indicate error
-	            blink_led(10);                     
-            }
-			
-			// Flush receive buffer
-			m_usb_rx_flush();
-				
-		}
-		
-		else{
-			m_usb_rx_flush();
-			//case of recieved bytes!=4
-		//	PORTC^=(1<<PORTC7);
-		}
-			            
-		// Delay 5ms
-		_delay_ms(80);
-	} 
-	
-	
-	generate_pulses(1000,1000,10000,10000);
-	while(!(pulse1&&pulse2)){
-		PORTC^=(1<<PORTC7);
-		_delay_ms(100);
-	}
-	blink_led(10);
-} 
-
-void setup_hardware(){
-	//setup LED
-	DDRF |= ((1<<DDF0)|(1<<DDF1)|(1<<DDF4));
-	PORTF &= ((0<<PORTF0)|(0<<PORTF1)|(0<<PORTF4));
-	
 }
 
-void blink_led(uint8_t count){
-	while(count>0){
-		PORTF ^=(1<<PORTF4);
+
+
+
+
+
+
+
+
+
+/** Configures the board hardware and chip peripherals for the demo's functionality. */
+void SetupHardware(void)
+{
+	#if (ARCH == ARCH_AVR8)
+	/* Disable watchdog if enabled by bootloader/fuses */
+	MCUSR &= ~(1 << WDRF);
+	wdt_disable();
+
+	/* Disable clock division */
+	clock_prescale_set(clock_div_1);
+	#endif
+
+	/* Hardware Initialization */
+	USB_Init();
+	
+	DDRC |= (1 << DDC7);
+	PORTC &= ~(1 << PORTC7); // Ensure LED is off initially
+}
+
+void echo_coordinates(uint16_t c1, uint16_t c2)
+{
+	_delay_ms(100);
+	
+	// For coordinate1
+	CDC_Device_SendByte(&VirtualSerial_CDC_Interface, (c1 >> 8) & 0xFF);  // Send high byte
+	CDC_Device_SendByte(&VirtualSerial_CDC_Interface, c1 & 0xFF);         // Send low byte
+	
+	// For coordinate2
+	CDC_Device_SendByte(&VirtualSerial_CDC_Interface, (c2 >> 8) & 0xFF);  // Send high byte
+	CDC_Device_SendByte(&VirtualSerial_CDC_Interface, c2 & 0xFF);         // Send low byte
+}
+
+void blink_led(uint8_t count)
+{
+	while (count > 0) {
+		PORTF ^= (1 << PORTF4);
 		count--;
 		_delay_ms(100);
 	}
 }
 
-void echo_cordinates(uint16_t c1, uint16_t c2){
-	_delay_ms(100);
-	// For coordinate1
-	m_usb_tx_char((c1 >> 8) & 0xFF);  // Send high byte
-	m_usb_tx_char(c1 & 0xFF);         // Send low byte
 
-	// For coordinate2
-	m_usb_tx_char((c2 >> 8) & 0xFF);  // Send high byte
-	m_usb_tx_char(c2 & 0xFF);         // Send low byte
+/** Event handler for the library USB Configuration Changed event. */
+void EVENT_USB_Device_ConfigurationChanged(void)
+{
+	bool ConfigSuccess = true;
+	ConfigSuccess &= CDC_Device_ConfigureEndpoints(&VirtualSerial_CDC_Interface);
+
+}
+
+/** Event handler for the library USB Control Request reception event. */
+void EVENT_USB_Device_ControlRequest(void)
+{
+	CDC_Device_ProcessControlRequest(&VirtualSerial_CDC_Interface);
 }

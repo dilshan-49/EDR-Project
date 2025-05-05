@@ -1,6 +1,13 @@
-#ifndef DRIVER3_0_H_
-#define DRIVER3_0_H_
+/*
+ * StepperDriver2_0.h
+ *
+ * Created: 5/5/2025 3:01:24 PM
+ *  Author: adhee
+ */ 
 
+
+#ifndef STEPPERDRIVER2_0_H_
+#define STEPPERDRIVER2_0_H_
 /*
  * StepperDriver.h
  * Created: 4/13/2025 5:49:38 PM
@@ -204,4 +211,4 @@ void move_XY(uint16_t targetPositionX, uint16_t targetPositionY, uint8_t enableM
     g_currentPositionY = targetPositionY;
 }
 
-#endif /* DRIVER3_0_H_ */
+#endif /* STEPPERDRIVER2_0_H_ */

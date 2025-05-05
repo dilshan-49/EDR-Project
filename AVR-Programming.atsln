@@ -3,11 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Atmel Studio Solution File, Format Version 11.00
 VisualStudioVersion = 14.0.23107.0
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{54F91283-7BC4-4236-8FF9-10F437C3AD48}") = "USB-Serial", "USB-Serial\USB-Serial.cproj", "{DCE6C7E3-EE26-4D79-826B-08594B9AD897}"
-EndProject
 Project("{54F91283-7BC4-4236-8FF9-10F437C3AD48}") = "Interrupt", "Interrupt\Interrupt.cproj", "{A7991478-CACE-4D5C-AFEA-4DBACC3AD35D}"
-EndProject
-Project("{54F91283-7BC4-4236-8FF9-10F437C3AD48}") = "serial-interrupt", "serial-interrupt\serial-interrupt.cproj", "{6EDC559B-C570-42B0-A102-56F4360F462B}"
 EndProject
 Project("{54F91283-7BC4-4236-8FF9-10F437C3AD48}") = "Final", "Final\Final.cproj", "{A1055181-A464-43E2-AD31-B9B78486C103}"
 EndProject
@@ -19,18 +15,10 @@ Global
 		Release|AVR = Release|AVR
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{DCE6C7E3-EE26-4D79-826B-08594B9AD897}.Debug|AVR.ActiveCfg = Debug|AVR
-		{DCE6C7E3-EE26-4D79-826B-08594B9AD897}.Debug|AVR.Build.0 = Debug|AVR
-		{DCE6C7E3-EE26-4D79-826B-08594B9AD897}.Release|AVR.ActiveCfg = Release|AVR
-		{DCE6C7E3-EE26-4D79-826B-08594B9AD897}.Release|AVR.Build.0 = Release|AVR
 		{A7991478-CACE-4D5C-AFEA-4DBACC3AD35D}.Debug|AVR.ActiveCfg = Debug|AVR
 		{A7991478-CACE-4D5C-AFEA-4DBACC3AD35D}.Debug|AVR.Build.0 = Debug|AVR
 		{A7991478-CACE-4D5C-AFEA-4DBACC3AD35D}.Release|AVR.ActiveCfg = Release|AVR
 		{A7991478-CACE-4D5C-AFEA-4DBACC3AD35D}.Release|AVR.Build.0 = Release|AVR
-		{6EDC559B-C570-42B0-A102-56F4360F462B}.Debug|AVR.ActiveCfg = Debug|AVR
-		{6EDC559B-C570-42B0-A102-56F4360F462B}.Debug|AVR.Build.0 = Debug|AVR
-		{6EDC559B-C570-42B0-A102-56F4360F462B}.Release|AVR.ActiveCfg = Release|AVR
-		{6EDC559B-C570-42B0-A102-56F4360F462B}.Release|AVR.Build.0 = Release|AVR
 		{A1055181-A464-43E2-AD31-B9B78486C103}.Debug|AVR.ActiveCfg = Debug|AVR
 		{A1055181-A464-43E2-AD31-B9B78486C103}.Debug|AVR.Build.0 = Debug|AVR
 		{A1055181-A464-43E2-AD31-B9B78486C103}.Release|AVR.ActiveCfg = Release|AVR

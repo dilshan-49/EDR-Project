@@ -21,22 +21,36 @@
 // Pin definitions for clarity
 #define MOTOR1_PULSE_PIN    PB5   // OC1A output pin for motor 1 pulse
 #define MOTOR2_PULSE_PIN    PC6   // OC3A output pin for motor 2 pulse
-#define STATUS_LED_PIN      PC7   // Status LED pin
-#define DEBUG_LED_PIN       PD6   // Debug LED pin
 #define MOTOR1_DIR_PIN      PD0   // Direction pin for motor 1
 #define MOTOR2_DIR_PIN      PD4   // Direction pin for motor 2
 #define MOTOR1_ENABLE_PIN   PD2   // Enable pin for motor 1 (active low)
 #define MOTOR2_ENABLE_PIN   PD3   // Enable pin for motor 2 (active low)
 
-// Global variables for pulse counting and control
+#define ENDEFFECTOR_DIR1    PORTB
+#define ENDEFFECTOR_DIR2   PORTC
+#define ENDEFFECTOR_PWM     PORTD
+#define ENCODER_A           PORTD
+
+#define VACUM_PUMP      PORTD
+#define SOLENOID_VALVE  PORTD
+
+#define LIMITING_SWITCH_PIN  PD7
+
 volatile uint32_t motor1PulseCount = 0;   // Counter for motor 1 pulses
 volatile uint32_t motor2PulseCount = 0;   // Counter for motor 2 pulses
+
 uint32_t motor1TargetPulses;              // Target pulses for motor 1
 uint32_t motor2TargetPulses;              // Target pulses for motor 2
 uint16_t pulsesPerRevolution = 1000;      // Pulses per revolution
 uint16_t currentPositionX = 0;            // Current X position in mm
 uint16_t currentPositionY = 0;            // Current Y position in mm
 uint8_t pitch =8;                           // lead skrew pitch 8mm
+
+
+
+
+
+
 /**
  * @brief Initializes timer and GPIO settings for stepper control
  */
@@ -94,6 +108,7 @@ ISR(TIMER1_COMPA_vect) {
     motor1PulseCount++; 
     if (motor1PulseCount >= motor1TargetPulses) {
         TCCR1B &= ~(1 << CS10);             // Stop Timer1
+        motor1PulseCount = 0;
     }
 }
 
@@ -101,6 +116,7 @@ ISR(TIMER3_COMPA_vect) {
     motor2PulseCount++; 
     if (motor2PulseCount >= motor2TargetPulses) {
         TCCR3B &= ~(1 << CS30);             // Stop Timer3
+        motor2PulseCount = 0;
     }
 }
 

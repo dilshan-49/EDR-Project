@@ -26,39 +26,39 @@
 #define MOTOR1_ENABLE_PIN   PD2   // Enable pin for motor 1 (active low)
 #define MOTOR2_ENABLE_PIN   PD3   // Enable pin for motor 2 (active low)
 
-#define ENDEFFECTOR_DIR1    PORTB
-#define ENDEFFECTOR_DIR2   PORTC
-#define ENDEFFECTOR_PWM     PORTD
-#define ENCODER_A           PORTD
+#define ENDEFFECTOR_DIR1    PD5
+#define ENDEFFECTOR_DIR2    PB6
+#define ENDEFFECTOR_PWM     PB7
+#define ENCODER_A           PD0
 
-#define VACUM_PUMP      PORTD
-#define SOLENOID_VALVE  PORTD
+#define VACUM_PUMP          PC7
+#define SOLENOID_VALVE      PE2
 
-#define LIMITING_SWITCH_PIN  PD7
+#define LIMITING_SWITCH_PIN PD2
 
 volatile uint32_t motor1PulseCount = 0;   // Counter for motor 1 pulses
 volatile uint32_t motor2PulseCount = 0;   // Counter for motor 2 pulses
+volatile uint32_t motor3PulseCount = 0;
 
 uint32_t motor1TargetPulses;              // Target pulses for motor 1
 uint32_t motor2TargetPulses;              // Target pulses for motor 2
+uint32_t motor3TargetPulses;
 uint16_t pulsesPerRevolution = 1000;      // Pulses per revolution
+uint8_t  pitch =8;                           // lead skrew pitch 8mm
+
 uint16_t currentPositionX = 0;            // Current X position in mm
 uint16_t currentPositionY = 0;            // Current Y position in mm
-uint8_t pitch =8;                           // lead skrew pitch 8mm
+uint16_t currentPositionZ = 0;            // Current Y position in mm
+
+uint8_t MAX_VEL  =200;
+uint8_t MAX_ACC  =50;
 
 
-
-
-
-
-/**
- * @brief Initializes timer and GPIO settings for stepper control
- */
 void driver_setup(void) {
     // Configure output pins for motor control
-    DDRB |= (1 << MOTOR1_PULSE_PIN);  
+    DDRB |= (1 << MOTOR1_PULSE_PIN) | (1<< ENDEFFECTOR_DIR2) | (1<< ENDEFFECTOR_PWM);  
     DDRC |= (1 << MOTOR2_PULSE_PIN); 
-
+    DDRD |= (1<< ENDEFFECTOR_DIR1);
     TCCR1A = (1 << COM1A0);                 // Toggle OC1A on compare match
     TCCR1B = (1 << WGM12) | (1 << CS10);    // CTC mode, no prescaling
 
@@ -70,13 +70,18 @@ void driver_setup(void) {
     PORTD &= ~(1 << MOTOR1_ENABLE_PIN);  // Enable motor 1
     PORTD &= ~(1 << MOTOR2_ENABLE_PIN);  // Enable motor 2
     _delay_ms(250);  
+
+    TCCR0A = (1 << COM0A1) | (1 << WGM01) | (1 << WGM00);           // Fast PWM, non-inverting
+    TCCR0B = (1 << WGM02) | (1 << CS01); // Prescaler 8   need to verify that 7.8khz ok for the motor
+    OCR0A = 0;
+
 }
 
 void generate_pulses(uint32_t motor1Frequency, uint32_t motor2Frequency, 
-                    uint32_t motor1PulseCount, uint32_t motor2PulseCount) {
+                    uint32_t m1PulseCount, uint32_t m2PulseCount) {
 
-    motor1TargetPulses = 2 * motor1PulseCount;
-    motor2TargetPulses = 2 * motor2PulseCount;
+    motor1TargetPulses = 2 * m1PulseCount;
+    motor2TargetPulses = 2 * m2PulseCount;
 
     if (motor1Frequency > 100) {
         OCR1A = F_CPU / (motor1Frequency * 2) - 1;  // Calculate compare value for desired frequency
@@ -118,6 +123,10 @@ ISR(TIMER3_COMPA_vect) {
         TCCR3B &= ~(1 << CS30);             // Stop Timer3
         motor2PulseCount = 0;
     }
+}
+
+ISR(INT0_vect) {
+    motor3PulseCount++;  // Increase count (can be modified for direction)
 }
 
 void move_XY(uint16_t targetPositionX, uint16_t targetPositionY) {
@@ -168,6 +177,13 @@ void move_XY(uint16_t targetPositionX, uint16_t targetPositionY) {
     // Update current position
     currentPositionX = targetPositionX;
     currentPositionY = targetPositionY;
+}
+
+void move_Z(uint16_t distance){
+;
+
+
+
 }
 
 #endif /* STEPPERDRIVER2_0_H_ */

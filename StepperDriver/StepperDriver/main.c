@@ -5,14 +5,12 @@
  * Author : adhee
  */ 
 
-#include <avr/io.h>
-
-
+#include"StepperDriver2_0.h"
 int main(void)
 {
+    driver_setup();
     /* Replace with your application code */
-    while (1) 
-    {
-    }
+    move_XY(100,100);
+
 }
 

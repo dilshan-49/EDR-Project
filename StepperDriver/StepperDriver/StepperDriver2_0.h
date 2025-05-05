@@ -29,18 +29,18 @@
 #define MOTOR2_ENABLE_PIN   PD3   // Enable pin for motor 2 (active low)
 
 // Global variables for pulse counting and control
-volatile uint32_t g_motor1PulseCount = 0;   // Counter for motor 1 pulses
-volatile uint32_t g_motor2PulseCount = 0;   // Counter for motor 2 pulses
-uint32_t g_motor1TargetPulses;              // Target pulses for motor 1
-uint32_t g_motor2TargetPulses;              // Target pulses for motor 2
-uint16_t g_pulsesPerRevolution = 1000;      // Pulses per revolution
-uint16_t g_currentPositionX = 0;            // Current X position in mm
-uint16_t g_currentPositionY = 0;            // Current Y position in mm
+volatile uint32_t motor1PulseCount = 0;   // Counter for motor 1 pulses
+volatile uint32_t motor2PulseCount = 0;   // Counter for motor 2 pulses
+uint32_t motor1TargetPulses;              // Target pulses for motor 1
+uint32_t motor2TargetPulses;              // Target pulses for motor 2
+uint16_t pulsesPerRevolution = 1000;      // Pulses per revolution
+uint16_t currentPositionX = 0;            // Current X position in mm
+uint16_t currentPositionY = 0;            // Current Y position in mm
 uint8_t pitch =8;                           // lead skrew pitch 8mm
 /**
  * @brief Initializes timer and GPIO settings for stepper control
  */
-void timer_setup(void) {
+void driver_setup(void) {
     // Configure output pins for motor control
     DDRB |= (1 << MOTOR1_PULSE_PIN);  
     DDRC |= (1 << MOTOR2_PULSE_PIN); 
@@ -61,8 +61,8 @@ void timer_setup(void) {
 void generate_pulses(uint32_t motor1Frequency, uint32_t motor2Frequency, 
                     uint32_t motor1PulseCount, uint32_t motor2PulseCount) {
 
-    g_motor1TargetPulses = 2 * motor1PulseCount;
-    g_motor2TargetPulses = 2 * motor2PulseCount;
+    motor1TargetPulses = 2 * motor1PulseCount;
+    motor2TargetPulses = 2 * motor2PulseCount;
 
     if (motor1Frequency > 100) {
         OCR1A = F_CPU / (motor1Frequency * 2) - 1;  // Calculate compare value for desired frequency
@@ -91,23 +91,23 @@ void generate_pulses(uint32_t motor1Frequency, uint32_t motor2Frequency,
 }
 
 ISR(TIMER1_COMPA_vect) {
-    g_motor1PulseCount++; 
-    if (g_motor1PulseCount >= g_motor1TargetPulses) {
+    motor1PulseCount++; 
+    if (motor1PulseCount >= motor1TargetPulses) {
         TCCR1B &= ~(1 << CS10);             // Stop Timer1
     }
 }
 
 ISR(TIMER3_COMPA_vect) {
-    g_motor2PulseCount++; 
-    if (g_motor2PulseCount >= g_motor2TargetPulses) {
+    motor2PulseCount++; 
+    if (motor2PulseCount >= motor2TargetPulses) {
         TCCR3B &= ~(1 << CS30);             // Stop Timer3
     }
 }
 
 void move_XY(uint16_t targetPositionX, uint16_t targetPositionY) {
     // Calculate movement distances
-    uint16_t distanceX = targetPositionX - g_currentPositionX;
-    uint16_t distanceY = targetPositionY - g_currentPositionY;
+    uint16_t distanceX = targetPositionX - currentPositionX;
+    uint16_t distanceY = targetPositionY - currentPositionY;
     
     // Set direction pins based on movement direction
     if (distanceX >= 0) {
@@ -125,8 +125,8 @@ void move_XY(uint16_t targetPositionX, uint16_t targetPositionY) {
     }
     
     // Calculate required pulses (convert mm to steps)
-    uint32_t xPulses = (uint32_t)(distanceX * g_pulsesPerRevolution / pitch);
-    uint32_t yPulses = (uint32_t)(distanceY * g_pulsesPerRevolution / pitch);
+    uint32_t xPulses = (uint32_t)(distanceX * pulsesPerRevolution / pitch);
+    uint32_t yPulses = (uint32_t)(distanceY * pulsesPerRevolution / pitch);
     
     // Determine frequencies for constant velocity (adjust as needed)
     uint32_t baseFrequency = 10000;          // Base frequency in Hz
@@ -150,8 +150,8 @@ void move_XY(uint16_t targetPositionX, uint16_t targetPositionY) {
     );
     
     // Update current position
-    g_currentPositionX = targetPositionX;
-    g_currentPositionY = targetPositionY;
+    currentPositionX = targetPositionX;
+    currentPositionY = targetPositionY;
 }
 
 #endif /* STEPPERDRIVER2_0_H_ */

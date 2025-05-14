@@ -63,7 +63,8 @@
 int main(void){
 	uint16_t coordinate1 = 0;
 	uint16_t coordinate2 = 0;
-	    
+	bool pulse1;
+	bool pulse2;
 	SetupHardware();
 	
     while (1)
@@ -115,9 +116,7 @@ int main(void){
 			    CDC_Device_SendByte(&VirtualSerial_CDC_Interface, SUCCESS);
 			    
 			    // Blink LED to indicate success
-			    PORTF |= (1 << PORTF4);
-			    _delay_ms(200);
-			    PORTF &= ~(1 << PORTF4);
+			    blink_led(8);
 		    }
 	    }
 	    
@@ -129,13 +128,6 @@ int main(void){
     }
 
 }
-
-
-
-
-
-
-
 
 
 

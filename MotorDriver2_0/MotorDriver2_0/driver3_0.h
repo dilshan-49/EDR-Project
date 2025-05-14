@@ -8,7 +8,7 @@
  * Modified: 5/3/2025
  * 
  * Specifications:
- * - Pulses per revolution: 800
+ * - Pulses per revolution: 1000
  * - Maximum frequency: 30kHz
  * - Motor revolutions ratio: 1:100 
  */
@@ -114,7 +114,6 @@ ISR(TIMER1_COMPA_vect) {
     
     // Check if target pulse count reached
     if (g_motor1PulseCount >= g_motor1TargetPulses) {
-        PORTD |= (1 << DEBUG_LED_PIN);      // Set debug LED (indicate completion)
         TCCR1B &= ~(1 << CS10);             // Stop Timer1
     }
 }
@@ -127,8 +126,7 @@ ISR(TIMER3_COMPA_vect) {
     
     // Check if target pulse count reached
     if (g_motor2PulseCount >= g_motor2TargetPulses) {
-        TCCR3B &= ~(1 << CS30);             // Stop Timer3
-        PORTC |= (1 << STATUS_LED_PIN);     // Set status LED (indicate completion)
+        TCCR3B &= ~(1 << CS30);             // Stop Timer31 Q1
     }
 }
 

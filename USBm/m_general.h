@@ -43,15 +43,7 @@
 // As of version 2.0, this will return either 1 (TRUE) or 0 (FALSE)
 
 
-// -----------------------------------------------------------------------------
-// Disable JTAG to access F4-F7:
-// -----------------------------------------------------------------------------
 
-#define m_disableJTAG()		MCUCR = (1 << JTD); MCUCR = (1 << JTD)
-// Setting the JTD bit in MCUCR twice within four clock cycles will allow user
-// access to F4-F7 as normal port pins. Note that using |= is too slow for this
-// operation to work correctly, so we are setting the entire register
-// (forutnately, all other bits in MCUCR are 0 anyway).
 
 
 // -----------------------------------------------------------------------------

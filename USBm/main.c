@@ -10,9 +10,8 @@
 #include <stdint.h>
 #include <stdbool.h>
 
-#include "m_general.h"
-#include "m_usb.h"
-#include "Driver21.h"
+#include "usb/usb.h"
+#include "stepperDriver/StepperDriver2_0.h"
 /* Flags Used for Communication */
 
 #define SUCCESS 0xFF
@@ -21,6 +20,14 @@
 #define NAK 0x55
 #define GENERATING 0x11
 #define WAITING 0x22
+
+
+
+// -----------------------------------------------------------------------------
+// Disable JTAG to access F4-F7:
+// -----------------------------------------------------------------------------
+
+
 
 
 
@@ -36,48 +43,45 @@ int main(void)
 	
 	uint8_t response = 0;
 	
-	m_usb_init();
-	timer_setup();
-	setup_hardware();
+	usb_init();
+	driver_setup();
 	
-
-	while(!m_usb_isconnected()); // wait for a connection
-	while(m_usb_isconnected())
-	{	m_usb_tx_char(WAITING);
-		if(m_usb_rx_available()==4)
+	move_XY(1000,1000);
+	
+}
+	
+/*
+	while(!usb_isconnected()); // wait for a connection
+	while(usb_isconnected())
+	{	usb_tx_char(WAITING);
+		if(usb_rx_available()==4)
 		{
 			// Read 16bit coordinate 1
-			pulse1=false;
-			pulse2=false;
-			coordinate1 = m_usb_rx_char();
-			coordinate1=(coordinate1<<8)| m_usb_rx_char();
+
+			coordinate1 = usb_rx_char();
+			coordinate1=(coordinate1<<8)| usb_rx_char();
 			
 			// Read 16bit coordinate 2
-			coordinate2 = m_usb_rx_char();
-			coordinate2=(coordinate2<<8)|m_usb_rx_char();
+			coordinate2 = usb_rx_char();
+			coordinate2=(coordinate2<<8)|usb_rx_char();
 			
 			echo_cordinates(coordinate1,coordinate2);
 			
-			while(!m_usb_rx_available());
-			response = m_usb_rx_char();
+			while(!usb_rx_available());
+			response = usb_rx_char();
 			
 			if(response == ACK)
 			{
 
 				
-				m_usb_tx_char(GENERATING);
+				usb_tx_char(GENERATING);
 				// Generate pulses based on counts
-				pulseCount1=0;
-				pulseCount2=0;
+
 				generate_pulses(1000,1000,coordinate1,coordinate2);
 				
-				while (!(pulse1 && pulse2)){
-					PORTF ^= (1<<PORTF4);
-					_delay_ms(100);
-				};
 				
 				PORTF &= ((0<<PORTF0)|(0<<PORTF1)|(0<<PORTF4));
-				m_usb_tx_char(SUCCESS);
+				usb_tx_char(SUCCESS);
 				
 				PORTF |= 1 << PORTF4;
 				_delay_ms(200);
@@ -92,29 +96,20 @@ int main(void)
 			}
 			
 			// Flush receive buffer
-			m_usb_rx_flush();
+			usb_rx_flush();
 			
 		}
 		
 		else{
-			m_usb_rx_flush();
+			usb_rx_flush();
 			//case of recieved bytes!=4
 			PORTC^=(1<<PORTC7);
 		}
 		
 		// Delay 5ms
-		_delay_ms(80);
-	}
-	
-	
-	generate_pulses(1000,1000,10000,10000);
-	while(!(pulse1&&pulse2)){
-		PORTC^=(1<<PORTC7);
-		_delay_ms(100);
-	}
-	blink_led(10);
-}
+		_delay_ms(80);	
 
+	}
 
 }
 
@@ -123,9 +118,10 @@ void setup_hardware(){
 	DDRF |= ((1<<DDF0)|(1<<DDF1)|(1<<DDF4));
 
 	PORTF &= ((0<<PORTF0)|(0<<PORTF1)|(0<<PORTF4));
-	DDRD|= (1<<DDD0)|(1<<DDD4);   // Pins for EN and DIR for PC6 PD0=D3 PD4=D4
+	
 	
 }
+*/
 
 void blink_led(uint8_t count){
 	while(count>0){
@@ -138,10 +134,11 @@ void blink_led(uint8_t count){
 void echo_cordinates(uint16_t c1, uint16_t c2){
 	_delay_ms(100);
 	// For coordinate1
-	m_usb_tx_char((c1 >> 8) & 0xFF);  // Send high byte
-	m_usb_tx_char(c1 & 0xFF);         // Send low byte
+	usb_tx_char((c1 >> 8) & 0xFF);  // Send high byte
+	usb_tx_char(c1 & 0xFF);         // Send low byte
 
 	// For coordinate2
-	m_usb_tx_char((c2 >> 8) & 0xFF);  // Send high byte
-	m_usb_tx_char(c2 & 0xFF);         // Send low byte
+	usb_tx_char((c2 >> 8) & 0xFF);  // Send high byte
+	usb_tx_char(c2 & 0xFF);         // Send low byte
 }
+

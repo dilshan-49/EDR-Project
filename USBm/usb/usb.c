@@ -297,9 +297,9 @@ static uint8_t cdc_line_rtsdtr=0;
 
 
 /**************************************************************************
- *
- *  Public Functions - these are the API intended for the user
- *
+ *																		**
+ *						Public Functions								**
+ *																		**		
  **************************************************************************/
 
 // initialize USB serial

@@ -1,10 +1,9 @@
-// -----------------------------------------------------------------------------
-// AVR USB communication subsystem for ATmega32u4
-// version: 2.2
-// same as version 2.1 built for M2 MAEVARM
-// date: June 16, 2012
-// authors: J. Fiene & J. Romano
-// -----------------------------------------------------------------------------
+/*
+ * StepperDriver.h
+ * Created: 4/12/2025 5:49:38 PM
+ * Author: HP Victus
+ * Modified: 5/15/2025
+ */
 
 #ifndef USB
 #define USB
@@ -49,21 +48,6 @@ char usb_tx_char(unsigned char c);
 // -----------------------------------------------------------------------------
 // -----------------------------------------------------------------------------
 // -----------------------------------------------------------------------------
-
-// ---- OVERLOADS FOR M1 BACK COMPATIBILITY ----
-#define usb_init()			m_usb_init()
-#define usb_configured()	m_usb_isconnected()
-
-#define usb_rx_available()	m_usb_rx_available()		   		   
-#define usb_rx_flush()		m_usb_rx_flush()		   			   
-#define usb_rx_char()		m_usb_rx_char()
-
-#define usb_tx_char(val)	m_usb_tx_char(val)
-
-
-#define usb_rx_ascii()	m_usb_rx_char()
-#define usb_tx_ascii(val)	m_usb_tx_char(val)
-
 
 
 
@@ -141,5 +125,15 @@ char usb_tx_char(unsigned char c);
 #define CDC_SET_LINE_CODING		0x20
 #define CDC_GET_LINE_CODING		0x21
 #define CDC_SET_CONTROL_LINE_STATE	0x22
+
+
+
+#define disableJTAG()		MCUCR = (1 << JTD); MCUCR = (1 << JTD)
+// Setting the JTD bit in MCUCR twice within four clock cycles will allow user
+// access to F4-F7 as normal port pins. Note that using |= is too slow for this
+// operation to work correctly, so we are setting the entire register
+// (forutnately, all other bits in MCUCR are 0 anyway).
+
+
 
 #endif

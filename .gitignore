@@ -1,0 +1,6 @@
+**/LUFA/
+**/Debug/
+**/.vscode/
+**/*.xml
+final/LUFA-minimal/
+

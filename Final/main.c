@@ -11,17 +11,32 @@
 
 
 /* Flags Used for Communication */
-	#define SUCCESS 0xFF
-	#define ERROR 0x00
-	#define ACK 0xAA
-	#define NAK 0x55
-	#define GENERATING 0x11
-	#define WAITING 0x22
+	#define READY 0x11
+	#define MOVING 0x22
+	#define MOVED 0x44
+	#define PICKING 0x88
+	#define PLACING 0x66
+	#define PLACED 0x99
+	#define PAUSED 0x55
+	#define INITIALIZINF 0xAA
+	#define INITIALIZED 0xCC
+	#define ERROR 0x1E
+	
+/* COMMANDS FROM THE MAIN CONTROLLER */
+
+	#define MOVE 0x5A
+	#define PICK 0xA5
+	#define PLACE 0x3C
+	#define PAUSE 0xC3
+	#define INITIALIZE 0x78
+	#define IS_FINISHED 0xE1
+	
 	
 /* Function Prototypes: */
 	void SetupHardware(void);
 	void blink_led(uint8_t count);
 	void echo_coordinates(uint16_t c1, uint16_t c2);
+	void enable_safety_switches();
 
 	void EVENT_USB_Device_ConfigurationChanged(void); // Write timeout exception raised in PC without this function 
 	void EVENT_USB_Device_ControlRequest(void);	// Cannot configure port error in PC without this function
